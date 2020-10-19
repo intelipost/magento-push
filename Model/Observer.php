@@ -22,6 +22,13 @@ class Intelipost_Push_Model_Observer
 		}
 	}
 
+	public function insertInvoice(Varien_Event_Observer $observer)
+    {
+        $nfe = Mage::getModel('basic/nfes');
+        $nfe->addData($observer->getEvent()->getData('nfe'));
+        $nfe->save();
+    }
+
 	public function afterInvoice(Varien_Event_Observer $observer)
 	{
 		$create_on_invoice = Mage::getStoreConfig('intelipost_push/general/create_on_invoice');
@@ -189,7 +196,7 @@ class Intelipost_Push_Model_Observer
 					$collection->getSelect()
 							->join(array('nfe' => $collection->getTable('basic/nfes')),
 							'main_table.increment_id=nfe.increment_id',
-							array('nfe.created_at' => 'nfe.created_at'));		                    
+							array('nfe.created_at' => 'nfe.created_at'));
 				}
 
 				$collection->getSelect()->where("bo.status LIKE ?", 'waiting');
